@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:battery/battery.dart';
 
-import 'package:omppu_pad/icons.dart';
+import 'package:omppu_pad/app_icons.dart';
 import 'package:omppu_pad/styles.dart';
 
 class BatteryCard extends StatefulWidget {
@@ -20,7 +20,7 @@ class _BatteryCardState extends State<BatteryCard> {
   Timer timer;
 
   _BatteryCardState() {
-    if (icon == null) icon = CustomIcons.batteryFull;
+    if (icon == null) icon = AppIcons.batteryFull;
     if (percentage == null) percentage = 100;
 
     try {
@@ -28,7 +28,7 @@ class _BatteryCardState extends State<BatteryCard> {
         if (state == BatteryState.full) {
           if (timer != null) timer.cancel();
           return this.setState(() {
-            icon = CustomIcons.batteryFull;
+            icon = AppIcons.batteryFull;
             percentage = 100;
           });
         }
@@ -37,7 +37,7 @@ class _BatteryCardState extends State<BatteryCard> {
             new Timer.periodic(new Duration(minutes: 1), updateBatteryStatus);
 
         if (state == BatteryState.charging) {
-          return this.setState(() => icon = CustomIcons.batteryCharging);
+          return this.setState(() => icon = AppIcons.batteryCharging);
         }
         if (state == BatteryState.discharging) {
           return updateBatteryStatus(timer);
@@ -45,7 +45,7 @@ class _BatteryCardState extends State<BatteryCard> {
       });
     } catch (e) {
       percentage = 110;
-      icon = CustomIcons.batteryFull;
+      icon = AppIcons.batteryFull;
     }
   }
 
@@ -65,15 +65,15 @@ class _BatteryCardState extends State<BatteryCard> {
   }
 
   IconData getIconByBatteryLevel(int batteryLevel) {
-    if (batteryLevel >= 90) return CustomIcons.batteryFull;
-    if (batteryLevel >= 60) return CustomIcons.battery75;
-    if (batteryLevel > 5) return CustomIcons.battery25;
-    return CustomIcons.batteryEmpty;
+    if (batteryLevel >= 90) return AppIcons.batteryFull;
+    if (batteryLevel >= 60) return AppIcons.battery75;
+    if (batteryLevel > 5) return AppIcons.battery25;
+    return AppIcons.batteryEmpty;
   }
 
   Color getIconColor() {
-    if (icon == CustomIcons.batteryCharging) return Colors.greenAccent[400];
-    if (icon == CustomIcons.batteryEmpty) return Colors.red[400];
+    if (icon == AppIcons.batteryCharging) return Colors.greenAccent[400];
+    if (icon == AppIcons.batteryEmpty) return Colors.red[400];
     if (percentage <= 15) return Colors.yellow;
     return Colors.green[700];
   }
@@ -102,8 +102,10 @@ class _BatteryCardState extends State<BatteryCard> {
                     // TODO someday replace with Android icons if .ttf is updated
                     icon,
                     color: getIconColor(),
-                  ))
-            ])
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

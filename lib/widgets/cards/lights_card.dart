@@ -10,18 +10,19 @@ class LightsCard extends StatefulWidget {
 }
 
 class _LightsCardState extends State<LightsCard> {
+  // use external bloc and listen to streams
   bool enabled;
   bool bedroomEnabled;
   bool livingRoomEnabled;
 
   void onToggleSwitch(bool value, int hueGroup) {
-    toggleLightsByGroup(value, hueGroup);
+    HueAPI.toggleLightsByGroup(value, hueGroup);
     this.setState(() {
-      if (hueGroup == HUE_GROUP_ALL) {
+      if (hueGroup == HueAPI.HUE_GROUP_ALL) {
         enabled = !enabled;
         bedroomEnabled = enabled;
         livingRoomEnabled = enabled;
-      } else if (hueGroup == HUE_GROUP_BEDROOM) {
+      } else if (hueGroup == HueAPI.HUE_GROUP_BEDROOM) {
         bedroomEnabled = !bedroomEnabled;
         enabled = bedroomEnabled;
       } else { // living room
@@ -54,17 +55,17 @@ class _LightsCardState extends State<LightsCard> {
                     new ToggleSwitchRow(
                       title: 'Master Switch',
                       value: enabled,
-                      onChanged: (value) => onToggleSwitch(value, HUE_GROUP_ALL),
+                      onChanged: (value) => onToggleSwitch(value, HueAPI.HUE_GROUP_ALL),
                     ),
                     new ToggleSwitchRow(
                       title: 'Bedroom',
                       value: false,
-                      onChanged: (value) => onToggleSwitch(value, HUE_GROUP_BEDROOM),
+                      onChanged: (value) => onToggleSwitch(value, HueAPI.HUE_GROUP_BEDROOM),
                     ),
                     new ToggleSwitchRow(
                       title: 'Living Room',
                       value: false,
-                      onChanged: (value) => onToggleSwitch(value, HUE_GROUP_LIVING_ROOM),
+                      onChanged: (value) => onToggleSwitch(value, HueAPI.HUE_GROUP_LIVING_ROOM),
                     )
                   ]
                 )
@@ -101,9 +102,8 @@ class _LightsCardState extends State<LightsCard> {
           children: <Widget>[
             new Text('Lights'),
             new FutureBuilder<bool>(
-              future: checkAnyLightsOn(),
-              builder:
-                  (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              future: HueAPI.checkAnyLightsOn(),
+              builder: (context, snapshot) {
                 enabled = false;
                 if (snapshot.hasData) {
                   enabled = snapshot.data;
@@ -117,18 +117,23 @@ class _LightsCardState extends State<LightsCard> {
                   children: <Widget>[
                     new CupertinoSwitch(
                       value: enabled,
-                      onChanged: (value) => onToggleSwitch(value, HUE_GROUP_ALL),
+                      onChanged: (value) => onToggleSwitch(value, HueAPI.HUE_GROUP_ALL),
                     ),
                     new IconButton(
                       icon: new Icon(Icons.more_vert),
                       onPressed: () => showDialog(
                         context: context,
-                        builder: buildLightsDialog)
-                    )
-                  ]
+                        builder: buildLightsDialog
+                      ),
+                    ),
+                  ],
                 );
-              })
-          ])));
+              }
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -150,9 +155,9 @@ class ToggleSwitchRow extends StatelessWidget {
           new CupertinoSwitch(
             value: value,
             onChanged: onChanged,
-          )
+          ),
         ],
-      )
+      ),
     );
   }
 }

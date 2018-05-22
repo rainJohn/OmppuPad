@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
-class CustomIcons {
-  CustomIcons._();
+/* 
+  This class is meant to provide access to any icons loaded as images,
+  and font icons not loaded by default in Flutter (e.g. extended 
+  iOS font-family icons).
+*/
+class AppIcons {
+  AppIcons._();
 
   static const fontFamily = 'CupertinoIcons';
   static const fontPackage = 'cupertino_icons';
@@ -33,6 +38,15 @@ class CustomIcons {
     const IconData(0xF3B1, fontFamily: fontFamily, fontPackage: fontPackage);
   static const repeatOne =
     const IconData(0xF49D, fontFamily: fontFamily, fontPackage: fontPackage);
+
+  // weather icons
+  static const AssetImage thunderstorm = const AssetImage('lib/assets/images/storm.png');
+  static const AssetImage drizzle = const AssetImage('lib/assets/images/drizzle.png');
+  static const AssetImage rain = const AssetImage('lib/assets/images/rain.png');
+  static const AssetImage snow = const AssetImage('lib/assets/images/snow.png');
+  static const AssetImage fog = const AssetImage('lib/assets/images/fog.png');
+  static const AssetImage clear = const AssetImage('lib/assets/images/clear.png');
+  static const AssetImage clouds = const AssetImage('lib/assets/images/clouds.png');
 }
 
 

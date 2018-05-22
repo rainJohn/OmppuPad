@@ -23,6 +23,7 @@ class Keychain {
   // Any new items added to keychain.yml should be added 
   // as class attributes and loaded here:
   Future<void> loadKeys() async {
+    // this should load an encrypted file and decipher it before usage and disposal.
     var yamlString = await rootBundle.loadString('lib/assets/keychain.yml');
     var keychain = loadYaml(yamlString);
     hueAPIKey = keychain['hue_api_key'];

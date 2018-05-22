@@ -42,15 +42,16 @@ open_weather_map_api_key: <key>
 
 ## Work In Progress
 
-- [ ] Spotify Beta Remote API Integration
+- [ ] Integration with Spotify's Beta Remote API.
 
 ## Wishlist
 
-This app is far from something deployable. Namely, many configuration elements are hard-coded, such as:
+This app is far from something deployable. Namely:
 
-- [ ] stops to be queried for (cards could have an options button with a modal)
-- [ ] Choose city for date and forecast (same as above)
-- [ ] No automagic discovery of Hue bridge and API Key
+- [ ] API Keys on client side/no proper protection
+- [ ] No automagic discovery of Hue bridge
+- [ ] stop queries are hardcoded (stop ids)
+- [ ] No choice of lat,lon for date and forecast
 
 ## Credits
 

@@ -2,47 +2,34 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:omppu_pad/models/weather.dart';
 import 'package:omppu_pad/utils/keychain.dart';
 
-final keychain = new Keychain();
+class WeatherAPI {
+  WeatherAPI._();
+  static final Keychain _keychain = new Keychain();
 
-Future<List<DayForecast>> fetchWeatherForecast() async {
-  final response = await http.get(
-      "http://api.openweathermap.org/data/2.5/forecast?q=Helsinki,fi&APPID=${keychain.openWeatherMapAPIKey}");
-  return dayForecastsFromJson(response.body);
-}
+  static Future<List<DayForecast>> getWeatherForecast() async {
+    final response = await http.get(
+      "http://api.openweathermap.org/data/2.5/forecast?q=Helsinki,fi&APPID=${_keychain.openWeatherMapAPIKey}");
+    print('weather responded: ${response.statusCode}');
+    return _dayForecastsFromJson(response.body);
+  }
 
-List<DayForecast> dayForecastsFromJson(String jsonString) {
-  var forecast = new List<DayForecast>();
-  Map decoded = json.decode(jsonString);
-  decoded['list'].forEach((day) {
-    var main = day['main'];
-    var weather = day['weather'][0];
-    forecast.add(
-      DayForecast(
-        code: weather['id'],
-        date: day['dt_txt'],
-        description: weather['description'],
-        maxTemperature: main['temp_max'],
-        minTemperature: main['temp_min']
+  static List<DayForecast> _dayForecastsFromJson(String jsonString) {
+    List<DayForecast> list = new List<DayForecast>();
+    Map decoded = json.decode(jsonString);
+    decoded['list'].forEach((day) =>
+      list.add(
+        DayForecast(
+          code: day['weather'][0]['id'],
+          date: day['dt_txt'],
+          description: day['weather'][0]['description'],
+          maxTemperature: day['main']['temp_max'],
+          minTemperature: day['main']['temp_min']
+        )
       )
     );
-  });
-  return forecast;
-}
-
-class DayForecast {
-  int code;
-  String date;
-  String description;
-  dynamic maxTemperature;
-  dynamic minTemperature;
-
-  DayForecast(
-      {this.code,
-      this.date,
-      this.description,
-      this.maxTemperature,
-      this.minTemperature
-      });
+    return list;
+  }
 }
