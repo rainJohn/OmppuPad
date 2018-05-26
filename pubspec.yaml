@@ -43,7 +43,8 @@ flutter:
     - lib/assets/images/snow.png
     - lib/assets/images/fog.png
     - lib/assets/images/clear.png
-    - lib/assets/images/clouds.png
+    - lib/assets/images/cloudy.png
+    - lib/assets/images/sleet.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

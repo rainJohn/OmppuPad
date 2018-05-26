@@ -1,39 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:omppu_pad/providers/music_player_provider.dart';
 
 import 'package:omppu_pad/styles.dart';
 
 class TrackDescription extends StatelessWidget {
-  final String title;
-  final String artist;
-
-  TrackDescription({this.title, this.artist});
-
   @override
   Widget build(BuildContext context) {
-    return new Column(
+    var musicPlayerBloc = MusicPlayerProvider.of(context);
+    return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        new Padding(
+        Padding(
           padding: EdgeInsets.symmetric(
-            vertical: 4.0, horizontal: Spacing.gutterMini),
-          child: new Text(
-            title, //TODO animate overflow to scroll back and forth
-            style: Theme.of(context).textTheme.body2,
-            overflow: TextOverflow.fade,
-            softWrap: false,
+            vertical: 4.0,
+            horizontal: Spacing.gutterMini
+          ),
+          child: StreamBuilder(
+            stream: musicPlayerBloc.track,
+            initialData: '',
+            builder: (context, snapshot) => 
+              Text(
+                snapshot.data,
+                style: Theme.of(context).textTheme.body2,
+                overflow: TextOverflow.fade,
+                softWrap: false,
+                ),
           ),
         ),
-        new Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: Spacing.gutterMini),
-          child: new Text(
-            artist,
-            style: Theme.of(context).textTheme.body1.merge(
-              new TextStyle(fontSize: 13.0)
-            ),
-            overflow: TextOverflow.fade,
-            softWrap: false,
+          child: StreamBuilder(
+            stream: musicPlayerBloc.artist,
+            initialData: '',
+            builder: (context, snapshot) =>
+              Text(
+                snapshot.data,
+                style: Theme.of(context).textTheme.body1.merge(
+                  TextStyle(fontSize: 13.0)
+                ),
+                overflow: TextOverflow.fade,
+                softWrap: false,
+              ),
           ),
         ),
       ],

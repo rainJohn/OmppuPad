@@ -10,9 +10,9 @@ import 'package:yaml/yaml.dart';
 class Keychain {
   String hueAPIKey;
   String hueBridgeAddress;
-  String openWeatherMapAPIKey;
+  String darkSkyAPIKey;
 
-  static final Keychain _singleton = new Keychain._internal();
+  static final Keychain _singleton = Keychain._internal();
 
   factory Keychain() {
     return _singleton;
@@ -28,6 +28,6 @@ class Keychain {
     var keychain = loadYaml(yamlString);
     hueAPIKey = keychain['hue_api_key'];
     hueBridgeAddress = keychain['hue_bridge_addr'];
-    openWeatherMapAPIKey = keychain['open_weather_map_api_key'];
+    darkSkyAPIKey = keychain['dark_sky_api_key'];
   }
 }

@@ -1,69 +1,74 @@
-import 'dart:async';
-
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:omppu_pad/providers/time_provider.dart';
 
 import 'package:omppu_pad/styles.dart';
 
-class ClockCard extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _ClockCardState();
-}
-
-class _ClockCardState extends State<ClockCard> {
-  Timer timer;
-  DateTime now = DateTime.now();
+class ClockCard extends StatelessWidget {
   final double cardSize = 300.0;
-
-  _ClockCardState() {
-    timer = new Timer.periodic(
-      new Duration(seconds: 1),
-      (Timer timer) => this.setState(() => now = DateTime.now())
-    );
-  }
-
-  static final DateFormat hourFormat = new DateFormat('HH:mm');
-  static final DateFormat secondFormat = new DateFormat('ss');
-  static final DateFormat dateFormat = new DateFormat('EEEE, dd MMMM yyyy');
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    var timeBloc = TimeProvider.of(context);
+    return Container(
       height: cardSize,
       width: cardSize,
-      child: new Card(
-        child: new Stack(
-          alignment: Alignment(0.0, 0.0),
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            new PositionedDirectional(
-              start: 65.0,
-              child: new Text(
-                hourFormat.format(now),
-                style: Theme.of(context).textTheme.body2.merge(
-                  new TextStyle(fontSize: 50.0),
-                ),
-              ),
-            ),
-            new PositionedDirectional(
-              top: 127.0,
-              start: 205.0,
-              child: new Text(
-                secondFormat.format(now),
-                style: Theme.of(context).textTheme.body2.merge(
-                  new TextStyle(
-                    fontSize: FontSize.smallText,
-                    color: Colors.deepOrangeAccent
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  width: 150.0,
+                  child: StreamBuilder(
+                    stream: timeBloc.hourAndMinutes,
+                    initialData: '',
+                    builder: (_, snapshot) =>
+                      Text(
+                        snapshot.data,
+                        style: Theme.of(context).textTheme.body2.merge(
+                          TextStyle(fontSize: 50.0),
+                        ),
+                      ),
                   ),
                 ),
-              ),
-            ),
-            new Positioned(
-              bottom: 55.0,
-              child: new Text(
-                dateFormat.format(now),
-                style: Theme.of(context).textTheme.body1.merge(
-                  new TextStyle(fontSize: FontSize.subheadText),
+                Container(
+                  margin: EdgeInsets.only(top: 10.0),
+                  width: 20.0,
+                  child: StreamBuilder(
+                    stream: timeBloc.seconds,
+                    initialData: '',
+                    builder: (_, snapshot) => 
+                      Text(
+                        snapshot.data,
+                        style: Theme.of(context).textTheme.body2.merge(
+                          TextStyle(
+                              fontSize: FontSize.smallText,
+                              color: Colors.deepOrangeAccent
+                          ),
+                        ),
+                      ),
+                  ),
                 ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: Spacing.gutterMini),
+              child: StreamBuilder(
+                stream: timeBloc.date,
+                initialData: '',
+                builder: (_, snapshot) =>
+                  Text(
+                    snapshot.data,
+                    style: Theme.of(context).textTheme.body1.merge(
+                      TextStyle(
+                        fontSize: FontSize.subheadText
+                      ),
+                    ),
+                  ),
               ),
             ),
           ],

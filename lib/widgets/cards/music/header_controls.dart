@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class HeaderControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        new IconButton(
-          icon: new Icon(Icons.search),
+        IconButton(
+          icon: Icon(Icons.search),
           onPressed: () => print('TODO handle search')),
-        new IconButton(
-          icon: new Icon(Icons.more_vert),
+        IconButton(
+          icon: Icon(Icons.more_vert),
           onPressed: () => print('TODO handle options'))
       ],
     );

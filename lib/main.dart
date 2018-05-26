@@ -14,7 +14,7 @@ void main() async {
   // load keychain before app load
   // also refresh spotify token here
   Future.wait([
-    new Keychain().loadKeys(),
+    Keychain().loadKeys(),
     SpotifyAPI.refreshAuthToken()
   ]).then((_) {
     // Disable system bar
@@ -24,7 +24,7 @@ void main() async {
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
-    runApp(new OmppuPad());
+    runApp(OmppuPad());
   });
 }
 
@@ -32,15 +32,15 @@ class OmppuPad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var themeBloc = ThemeBloc();
-    return new ThemeProvider(
+    return ThemeProvider(
       themeBloc: themeBloc,
-      child: new StreamBuilder<ThemeData>(
+      child: StreamBuilder<ThemeData>(
         stream: themeBloc.theme,
-        builder: (context, snapshot) {
-          return new MaterialApp(
+        builder: (_, snapshot) {
+          return MaterialApp(
             title: 'Omppu Pad',
             theme: snapshot.data, 
-            home: new Dashboard(),
+            home: Dashboard(),
           );
         }
       ),

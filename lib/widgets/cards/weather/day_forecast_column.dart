@@ -10,58 +10,66 @@ class DayForecastColumn extends StatelessWidget {
   DayForecastColumn({@required this.dayForecast});
 
   String getTemperatureRange() {
-    var min = kelvinToCelsius(dayForecast.minTemperature);
-    var max = kelvinToCelsius(dayForecast.maxTemperature);
-    return "$min - $max°C";
+    var min = dayForecast.minTemperature.toInt();
+    var max = dayForecast.maxTemperature.toInt();
+    return "$min - $max° C";
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isToday = isDateTimeToday(DateTime.parse(dayForecast.date));
+    bool isToday = isDateTimeToday(dayForecast.date);
     TextStyle style = isToday
       ? Theme.of(context).textTheme.body2
       : Theme.of(context).textTheme.body1;
-    return new Container(
-      decoration: new BoxDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: isToday
           ? Theme.of(context).selectedRowColor
           : Theme.of(context).cardColor,
-        borderRadius: BorderRadius.all(new Radius.circular(5.0))),
+        borderRadius: BorderRadius.all(Radius.circular(5.0))),
       padding: EdgeInsets.symmetric(horizontal: 26.0),
-      child: new Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          new Text(dateTimeStringToWeekday(dayForecast.date), style: style),
-          new Image(image: getImageByWeatherCode(dayForecast.code)),
-          new Text(getTemperatureRange(), style: style)
+          Text(
+            isToday ? 'Today' : DateFormat('EEEE').format(dayForecast.date),
+            style: style
+          ),
+          Image(image: getImageByWeatherCode(dayForecast.iconCode)),
+          Text(getTemperatureRange(), style: style)
         ]
       ),
     );
   }
 }
 
-// dynamic as either int or double may arrive at runtime, without locking to single type.
-// However this makes it unsafe. Union types would be great here...
-String kelvinToCelsius(dynamic kelvin) {
-  return (kelvin - 273.15).round().toString();
-}
-
 isDateTimeToday(DateTime dateTime) =>
   dateTime.weekday == DateTime.now().weekday;
 
-String dateTimeStringToWeekday(String string) {
-  DateTime dateTime = DateTime.parse(string);
-  if (isDateTimeToday(dateTime)) return 'Today';
-  return new DateFormat('EEEE').format(dateTime);
-}
-
 // refer to https://openweathermap.org/weather-conditions for codes and meanings
-AssetImage getImageByWeatherCode(int code) {
-  if (code >= 200 && code < 300) return AppIcons.thunderstorm;
-  if (code >= 300 && code < 400) return AppIcons.drizzle;
-  if (code >= 500 && code < 600) return AppIcons.rain;
-  if (code >= 600 && code < 700) return AppIcons.snow;
-  if (code >= 700 && code < 800) return AppIcons.fog;
-  if (code == 800) return AppIcons.clear;
-  return AppIcons.clouds;
+AssetImage getImageByWeatherCode(String code) {
+  switch(code) {
+    case 'clear':
+    case 'clear-day':
+    case 'clear-night':
+      return AppIcons.clear;
+    case 'rain':
+      return AppIcons.rain;
+    case 'snow':
+      return AppIcons.snow;
+    case 'sleet':
+      return AppIcons.sleet;
+    case 'wind':
+      return AppIcons.cloudy;
+    case 'fog':
+      return AppIcons.fog;
+    case 'cloudy':
+    case 'partly-cloudy-day':
+    case 'partly-cloudy-night':
+      return AppIcons.cloudy;
+    case 'storm':
+      return AppIcons.storm;
+    default:
+      return AppIcons.cloudy;
+  }
 }

@@ -1,60 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:omppu_pad/api/spotify.dart';
 import 'package:omppu_pad/app_icons.dart';
+import 'package:omppu_pad/providers/music_player_provider.dart';
 
-class PlayButton extends StatefulWidget {
-  final bool isPlaying;
+class PlayButton extends StatelessWidget {
 
-  PlayButton({this.isPlaying}) {
-    print('PlayButton: $isPlaying');
-  }
-
-    @override
-  State<StatefulWidget> createState() => new _PlayButtonState(isPlaying: isPlaying);
-}
-
-class _PlayButtonState extends State<PlayButton> {
-  bool isPlaying;
-
-  _PlayButtonState({this.isPlaying});
-
-  Widget getIcon(Color color) {
+  Widget getIcon(Color color, bool isPlaying) {
     if (isPlaying) {
-      return new Icon(AppIcons.pause, size: 25.0, color: color);
+      return Icon(AppIcons.pause, size: 25.0, color: color);
     }
-    return new Padding(
+    return Padding(
       padding: EdgeInsets.only(left: 4.0),
-      child: new Icon(AppIcons.play, size: 25.0, color: color),
+      child: Icon(AppIcons.play, size: 25.0, color: color),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    print('PlayButtonState: $isPlaying');
-    var color = Theme.of(context).textTheme.body2.color;
-    return new IconButton(
-      iconSize: 45.0,
-      onPressed: () async {
-        print('onPressed: $isPlaying');
-        var handler = isPlaying ? SpotifyAPI.pausePlayback : SpotifyAPI.resumePlayback;
-        this.setState(() => this.isPlaying = !this.isPlaying);
-        bool isPlayingAfterHandler = await handler();
-        if (isPlayingAfterHandler != this.isPlaying) {
-          this.setState(() => this.isPlaying = isPlayingAfterHandler);
+    var musicPlayerBloc = MusicPlayerProvider.of(context);
+    Color color = Theme.of(context).textTheme.body2.color;
+    return StreamBuilder(
+        stream: musicPlayerBloc.isPlaying,
+        initialData: false,
+        builder: (context, snapshot) {
+          bool isPlaying = snapshot.data;
+          return IconButton(
+            iconSize: 45.0,
+            onPressed: () => musicPlayerBloc.onIsPlayingChanged.add(!isPlaying),
+            icon: Container(
+              height: 45.0,
+              width: 45.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: color,
+                  width: 1.0,
+                ),
+              ),
+              child: getIcon(color, isPlaying),
+            ),
+          );
         }
-      },
-      icon: new Container(
-        height: 45.0,
-        width: 45.0,
-        decoration: new BoxDecoration(
-          shape: BoxShape.circle,
-          border: new Border.all(
-            color: color,
-            width: 1.0,
-          ),
-        ),
-        child: getIcon(color),
-      ),
     );
   }
 }

@@ -12,17 +12,18 @@ class PlaybackState {
     this.track,
     this.progressSeconds,
     this.durationSeconds,
-    this.isPlaying});
+    this.isPlaying
+  });
 
   PlaybackState.fallback() {
-    artist = '-';
-    album = '-';
-    track = '-';
+    artist = '';
+    album = '';
+    track = '';
     progressSeconds = 0.0;
     durationSeconds= 100.0;
     isPlaying = false;
   }
 }
 
-enum Skip { next, previous }
-enum Repeat { all, one, off }
+enum TrackSkip { next, previous }
+enum TrackRepeat { track, context, off }

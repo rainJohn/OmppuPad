@@ -4,41 +4,42 @@ import 'package:flutter/material.dart';
 import 'package:omppu_pad/providers/theme_provider.dart';
 import 'package:omppu_pad/styles.dart';
 
-class HeaderRow extends StatelessWidget {
+class Welcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var themeBloc = ThemeProvider.of(context);
-    return new Container(
+    return Container(
       padding: EdgeInsets.only(bottom: Spacing.gutterMini),
       child: Row(
         children: <Widget>[
-          new Expanded(
-            child: new Column(
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Text(
-                  "Home Dashboard",
+                Text(
+                  "OmppuPad",
                   style: Theme.of(context).textTheme.title,
                 ),
-                new Text(
-                  'Overview',
+                Text(
+                  'Dashboard Overview',
                   style: Theme.of(context).textTheme.subhead,
                 ),
               ],
             )
           ),
-          new Padding(
+          Padding(
             padding: EdgeInsets.only(right: Spacing.gutterMini),
-            child: new Text('Night Mode',
+            child: Text(
+              'Night Mode',
               style: Theme.of(context).textTheme.body1.merge(
-                new TextStyle(fontSize: FontSize.smallText)
+                TextStyle(fontSize: FontSize.smallText)
               ),
             ),
           ),
-          new CupertinoSwitch(
+          CupertinoSwitch(
             value: themeBloc.isDarkThemeToggled,
-            onChanged: (value) => themeBloc.toggleTheme.add(value)
+            onChanged: themeBloc.toggleTheme.add
           ),
         ],
       ),

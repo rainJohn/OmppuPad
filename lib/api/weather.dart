@@ -7,28 +7,31 @@ import 'package:omppu_pad/utils/keychain.dart';
 
 class WeatherAPI {
   WeatherAPI._();
-  static final Keychain _keychain = new Keychain();
+  static final Keychain _keychain = Keychain();
+  static final _url = 'https://api.darksky.net/forecast';
+  static final _queryParams = '?exclude=currently,minutely,hourly,alerts,flags&units=auto';
 
-  static Future<List<DayForecast>> getWeatherForecast() async {
+  static Future<List<DayForecast>> getWeatherForecast(String latitude, String longitude) async {
     final response = await http.get(
-      "http://api.openweathermap.org/data/2.5/forecast?q=Helsinki,fi&APPID=${_keychain.openWeatherMapAPIKey}");
-    print('weather responded: ${response.statusCode}');
+      "$_url/${_keychain.darkSkyAPIKey}/$latitude,$longitude$_queryParams");
     return _dayForecastsFromJson(response.body);
   }
 
   static List<DayForecast> _dayForecastsFromJson(String jsonString) {
-    List<DayForecast> list = new List<DayForecast>();
+    List<DayForecast> list = List<DayForecast>();
     Map decoded = json.decode(jsonString);
-    decoded['list'].forEach((day) =>
+    decoded['daily']['data'].forEach((day) =>
       list.add(
         DayForecast(
-          code: day['weather'][0]['id'],
-          date: day['dt_txt'],
-          description: day['weather'][0]['description'],
-          maxTemperature: day['main']['temp_max'],
-          minTemperature: day['main']['temp_min']
-        )
-      )
+          iconCode: day['summary'].contains(RegExp('thunder|storm|blizzard|tempest')) ? 'storm' : day['icon'],
+          date: DateTime.fromMillisecondsSinceEpoch(day['time'] * 1000),
+          description: day['summary'],
+          maxTemperature: day['temperatureHigh'],
+          minTemperature: day['temperatureLow'],
+          sunriseTime: DateTime.fromMillisecondsSinceEpoch(day['sunriseTime'] * 1000),
+          sunsetTime: DateTime.fromMillisecondsSinceEpoch(day['sunsetTime'] * 1000),
+        ),
+      ),
     );
     return list;
   }

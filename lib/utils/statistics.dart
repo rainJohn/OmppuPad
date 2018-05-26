@@ -7,7 +7,7 @@ class Statistics {
     // Ignore empty sets
     if (dataSet.length == 0) return null;
 
-    Map<dynamic, int> datumCount = new Map<dynamic, int>();
+    Map<dynamic, int> datumCount = Map<dynamic, int>();
     dataSet.forEach((datum) =>
       datumCount.containsKey(datum)
         ? datumCount[datum]++

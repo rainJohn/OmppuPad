@@ -26,7 +26,7 @@ class AppIcons {
   // playback icons
   static const shuffle =
     const IconData(0xF4A8, fontFamily: fontFamily, fontPackage: fontPackage);
-  static const prevSong =
+  static const previousSong =
     const IconData(0xF4AB, fontFamily: fontFamily, fontPackage: fontPackage);
   static const nextSong =
     const IconData(0xF4AD, fontFamily: fontFamily, fontPackage: fontPackage);
@@ -40,13 +40,14 @@ class AppIcons {
     const IconData(0xF49D, fontFamily: fontFamily, fontPackage: fontPackage);
 
   // weather icons
-  static const AssetImage thunderstorm = const AssetImage('lib/assets/images/storm.png');
+  static const AssetImage storm = const AssetImage('lib/assets/images/storm.png');
   static const AssetImage drizzle = const AssetImage('lib/assets/images/drizzle.png');
+  static const AssetImage sleet = const AssetImage('lib/assets/images/sleet.png');
   static const AssetImage rain = const AssetImage('lib/assets/images/rain.png');
   static const AssetImage snow = const AssetImage('lib/assets/images/snow.png');
   static const AssetImage fog = const AssetImage('lib/assets/images/fog.png');
   static const AssetImage clear = const AssetImage('lib/assets/images/clear.png');
-  static const AssetImage clouds = const AssetImage('lib/assets/images/clouds.png');
+  static const AssetImage cloudy = const AssetImage('lib/assets/images/cloudy.png');
 }
 
 

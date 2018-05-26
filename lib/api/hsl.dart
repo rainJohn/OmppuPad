@@ -14,7 +14,7 @@ class HslAPI {
         headers: {'Content-Type': 'application/graphql'});
   }
 
-  static Future<List<Arrival>> getStopArrivals(List<String> stopGtfsIds) async {
+  static Future<List<TransportArrival>> getStopArrivals(List<String> stopGtfsIds) async {
     var ids = stopGtfsIds.map((string) => "\"$string\"").join(", ");
     http.Response response = await _queryHSL("""
     {
@@ -38,12 +38,12 @@ class HslAPI {
     return _getArrivalsFromJson(utf8.decode(response.bodyBytes));
   }
 
-  static List<Arrival> _getArrivalsFromJson(String jsonString) {
-    List<Arrival> result = new List<Arrival>();
+  static List<TransportArrival> _getArrivalsFromJson(String jsonString) {
+    List<TransportArrival> result = List<TransportArrival>();
     json.decode(jsonString)['data']['stops'].forEach((stop) {
       for (var arrival in stop["stoptimesWithoutPatterns"]) {
         // WHY THE HELL DOES THIS FAIL WITH A MAP FN?!
-        result.add(new Arrival(
+        result.add(TransportArrival(
             gtfsId: stop['gtfsId'],
             headsign: arrival['headsign'],
             realtime: arrival['realtime'],

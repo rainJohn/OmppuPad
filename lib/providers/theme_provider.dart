@@ -15,7 +15,6 @@ class ThemeProvider extends InheritedWidget {
     Widget child
   }) : themeBloc = themeBloc ?? ThemeBloc(),
         super(key: key, child: child);
-
           
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
