@@ -33,8 +33,7 @@ class _BatteryCardState extends State<BatteryCard> {
           });
         }
 
-        timer =
-            new Timer.periodic(new Duration(minutes: 1), updateBatteryStatus);
+        timer = new Timer.periodic(new Duration(minutes: 1), updateBatteryStatus);
 
         if (state == BatteryState.charging) {
           return this.setState(() => icon = AppIcons.batteryCharging);

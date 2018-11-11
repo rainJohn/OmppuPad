@@ -25,7 +25,7 @@ class PlayButton extends StatelessWidget {
           bool isPlaying = snapshot.data;
           return IconButton(
             iconSize: 45.0,
-            onPressed: () => musicPlayerBloc.onIsPlayingChanged.add(!isPlaying),
+            onPressed: () => musicPlayerBloc.onIsPlaying(isPlaying),
             icon: Container(
               height: 45.0,
               width: 45.0,

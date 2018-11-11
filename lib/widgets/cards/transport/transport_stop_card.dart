@@ -5,14 +5,12 @@ import 'package:omppu_pad/models/transport.dart';
 import 'package:omppu_pad/widgets/cards/transport/transport_tab.dart';
 
 class TransportStopCard extends StatelessWidget {
-  final IconData icon;
   final String title;
   final TransportMode transportMode;
   final Map<String, List<String>> stops;
   final int initialTab;
 
   TransportStopCard(
-    this.icon,
     this.title,
     this.transportMode,
     this.stops,
@@ -43,7 +41,11 @@ class TransportStopCard extends StatelessWidget {
           child: Scaffold(
             appBar: new AppBar(
               backgroundColor: Theme.of(context).cardColor,
-              leading: new Icon(icon),
+              leading: new Icon(
+                transportMode == TransportMode.bus
+                  ? Icons.directions_bus
+                  : Icons.directions_railway
+              ),
               title: new Text(title,
                 style: Theme.of(context).textTheme.body2),
               bottom: new TabBar(

@@ -56,7 +56,7 @@ class _WeatherCardState extends State<WeatherCard> {
                   child: new Text('Failed to fetch weather data.'),
                 );
               }
-              return new Center(child: new CupertinoActivityIndicator());
+              return new Center(child: new CircularProgressIndicator());
             } 
           ),
         ),

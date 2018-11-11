@@ -27,8 +27,7 @@ class UtilityCards extends StatelessWidget {
           ),
           new Expanded(
             child: new TransportStopCard(
-              Icons.directions_railway,
-              'Tram Arrivals',
+              'Tram bls',
               TransportMode.tram,
               TransportStops.tramStopsMap,
               0
@@ -36,7 +35,6 @@ class UtilityCards extends StatelessWidget {
           ),
           new Expanded(
             child: new TransportStopCard(
-              Icons.directions_bus,
               'Bus Arrivals',
               TransportMode.bus,
               TransportStops.busStopsMap,

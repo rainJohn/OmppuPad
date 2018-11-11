@@ -27,7 +27,7 @@ class MusicWidget extends StatelessWidget {
           children: <Widget>[
             HeaderControls(),
             TrackDescription(),
-            ProgressBar(progressSeconds: 0.0, durationSeconds: 1.0, isPlaying: false),
+            ProgressBar(),
             PlaybackControls()
           ],
         ),

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert' as convert;
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,30 +12,32 @@ class SpotifyAPI {
 
   // ==================== SPOTIFY REMOTE API ====================
   // Get current state of remote player, as described by the class PlaybackState
-  static Future<PlaybackState> getCurrentlyPlaying() async {
+  static Future<PlaybackState> getPlayerStatus() async {
     http.Response res = await http.get(
       Uri.parse(
-        '$_baseUrl/me/player/currently-playing'),
+        '$_baseUrl/me/player'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_accessToken'
       }
     );
-    print("Currently playing returned: ${res.statusCode}\n\n${res.body}");
     if (res.body == null) {
       return PlaybackState.fallback();
     }
-    var decoded = convert.json.decode(res.body);
-    PlaybackState ps = PlaybackState(
-      artist: decoded['item']['artists'].map((artist) => artist['name']).join(', '),
-      album: decoded['item']['album']['name'],
-      track: decoded['item']['name'],
-      progressSeconds: decoded['progress_ms'] / 1000,
+    Map<String, dynamic> decoded = json.decode(res.body);
+    return PlaybackState(
+      artist: decoded['item']['artists'].map((artist) => artist['name']).join(', ') ?? '',
+      album: decoded['item']['album']['name'] ?? '',
+      track: decoded['item']['name'] ?? '',
+      progressSeconds: decoded['progress_ms'] / 1000, // TODO add timestamp diff
       durationSeconds: decoded['item']['duration_ms'] / 1000,
-      isPlaying: decoded['is_playing']
+      isPlaying: decoded['is_playing'] ?? false,
+      isShuffling: decoded['shuffle_state'] ?? false,
+      repeatState: decoded['repeat_state'] != null ? trackRepeatFromString(decoded['repeat_state']) : TrackRepeat.off
     );
-    return ps;
   }
+
+
 
   // Send a request to stop playback. Will respond with 403 if already stopped.
   // Returns whether the playback is running after calling.
@@ -48,7 +50,6 @@ class SpotifyAPI {
         'Authorization': 'Bearer $_accessToken'
       }
     );
-    print("Stopping playback returned: ${res.statusCode}\n\n${res.body}");
     if (res.statusCode != 204) return true;
     return false;
   }
@@ -63,7 +64,6 @@ class SpotifyAPI {
         'Authorization': 'Bearer $_accessToken'
       }
     );
-    print("resuming playback returned: ${res.statusCode}\n\n${res.body}");
     if (res.statusCode != 204) return false;
     return true;
   }
@@ -72,44 +72,41 @@ class SpotifyAPI {
   // Request will fail if there's no previous/next song in the context 
   // of the player.
   static skipPlayback(TrackSkip direction) async {
-    http.Response res = await http.post(
+    http.post(
       Uri.parse('$_baseUrl/me/player/${describeEnum(direction)}'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_accessToken'
       }
     );
-    print("skipping playback returned: ${res.statusCode}\n\n${res.body}");
   }
 
   // Send a request to enable/disable track shuffling
   static shufflePlayback(bool shuffle) async {
-    http.Response res = await http.put(
+    http.put(
       Uri.parse('$_baseUrl/me/player/shuffle?state=$shuffle'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_accessToken'
       }
     );
-    print("shuffling playback returned: ${res.statusCode}\n\n${res.body}");
   }
 
   // Send a request to set the desired repeat mode
   static repeatPlayback(TrackRepeat repeat) async {
-    http.Response res = await http.put(
+    http.put(
       Uri.parse('$_baseUrl/me/player/repeat?state=${describeEnum(repeat)}'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_accessToken'
       }
     );
-    print("repeating playback returned: ${res.statusCode}\n\n${res.body}");
   }
 
   // ==================== SPOTIFY REFRESH AUTH TOKEN ====================  
   static Future<void> refreshAuthToken() async {
-    var bytes = convert.utf8.encode("$_clientId:$_clientSecret");
-    var authorization = convert.base64.encode(bytes);
+    var bytes = utf8.encode("$_clientId:$_clientSecret");
+    var authorization = base64.encode(bytes);
     http.Response res = await http.post(
       Uri.parse('https://accounts.spotify.com/api/token'),
       headers: {
@@ -122,7 +119,7 @@ class SpotifyAPI {
       }
     );
     print("refresh auth returned: ${res.statusCode}\n\n${res.body}");
-    var decoded = convert.json.decode(res.body);
+    var decoded = json.decode(res.body);
     _accessToken = decoded['access_token'];
     if (decoded['refresh_token'] != null) {
       _refreshToken = decoded['refresh_token'];

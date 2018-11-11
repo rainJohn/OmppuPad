@@ -18,27 +18,33 @@ class MusicPlayerBloc {
   static final _shuffleController = BehaviorSubject<bool>();
   static final _repeatController = BehaviorSubject<TrackRepeat>();
 
+  // Player 'tick' stream. Used mainly for the slider.
+  //static final _playerTickController = Stream.periodic(Duration(seconds: 1));
   
   MusicPlayerBloc() {
+    Timer timer;
     // this handles a full state update (such as skipping tracks or init load)
     _playbackStateController.listen((PlaybackState newState) {
       _trackController.add(newState.track);
       _artistController.add(newState.artist);
-      _progressController.add(newState.progressSeconds);
       _durationController.add(newState.durationSeconds);
-    });
+      _playbackController.add(newState.isPlaying);
+      _shuffleController.add(newState.isShuffling);
+      _repeatController.add(newState.repeatState);
 
-    _playbackController.listen((bool isPlaying) async {
-      var handler = isPlaying ? SpotifyAPI.pausePlayback : SpotifyAPI.resumePlayback;
-      // we have to double check whether the op completed or not and re-set accordingly
-      bool isPlayingAfterHandler = await handler();
-      if (isPlaying != isPlayingAfterHandler) {
-        _playbackController.sink.add(isPlayingAfterHandler);
-      } 
+      _progressController.add(newState.progressSeconds);
+      if(newState.isPlaying) {
+        timer = Timer.periodic(Duration(seconds: 1), (_) async {
+          var lastDuration = await _durationController.last.wrapped;
+          _durationController.sink.add(lastDuration++);
+        });
+      } else {
+        if (timer != null) timer.cancel();
+      }
     });
 
     _skipController.listen((TrackSkip direction) {
-      SpotifyAPI.skipPlayback(direction).then(updatePlaybackState());
+      SpotifyAPI.skipPlayback(direction).then((_) => updatePlaybackState());
     });
 
     _shuffleController.listen((bool shuffle) => SpotifyAPI.shufflePlayback(shuffle));
@@ -48,10 +54,19 @@ class MusicPlayerBloc {
     updatePlaybackState();
   }
 
-  updatePlaybackState() async {
+  void updatePlaybackState() async {
     // TODO INVESTIGATE: If the request isn't delayed, we get the track playing before an update.
-    var playbackState = await Future.delayed(Duration(seconds: 2), SpotifyAPI.getCurrentlyPlaying);
+    var playbackState = await Future.delayed(Duration(milliseconds: 750), SpotifyAPI.getPlayerStatus);
     _playbackStateController.sink.add(playbackState);
+  }
+
+  void onIsPlaying(bool isPlaying) async {
+    var handler = isPlaying ? SpotifyAPI.pausePlayback : SpotifyAPI.resumePlayback;
+    // we have to double check whether the op completed or not and re-set accordingly
+    bool isPlayingAfterHandler = await handler();
+    if (isPlaying != isPlayingAfterHandler) {
+      _playbackController.sink.add(isPlayingAfterHandler);
+    }
   }
 
   // read-only accessors
@@ -61,7 +76,6 @@ class MusicPlayerBloc {
 
   // play/pause
   Stream<bool> get isPlaying => _playbackController.stream;
-  Sink<bool> get onIsPlayingChanged => _playbackController.sink;
 
   // skip
   Sink<TrackSkip> get onSkipTrack => _skipController.sink;

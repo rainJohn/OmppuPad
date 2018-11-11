@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class PlaybackState {
   String artist;
   String album;
@@ -5,6 +7,9 @@ class PlaybackState {
   double progressSeconds;
   double durationSeconds;
   bool isPlaying;
+  bool isShuffling;
+  TrackRepeat repeatState;
+
   
   PlaybackState({
     this.artist,
@@ -12,7 +17,9 @@ class PlaybackState {
     this.track,
     this.progressSeconds,
     this.durationSeconds,
-    this.isPlaying
+    this.isPlaying,
+    this.isShuffling,
+    this.repeatState
   });
 
   PlaybackState.fallback() {
@@ -22,8 +29,14 @@ class PlaybackState {
     progressSeconds = 0.0;
     durationSeconds= 100.0;
     isPlaying = false;
+    isShuffling = false;
+    repeatState = TrackRepeat.off;
   }
 }
 
 enum TrackSkip { next, previous }
 enum TrackRepeat { track, context, off }
+
+trackRepeatFromString(String string) {
+  return TrackRepeat.values.firstWhere(((e) => describeEnum(e) == string));
+}
